@@ -48,10 +48,6 @@ st.plotly_chart(fig_scatter)
 st.subheader('Mapa de Ventas por Estado')
 sales_by_state = df.groupby(['State', 'State_Code'])['Sales'].sum().reset_index()
 
-# Verificar los estados únicos
-unique_states = sales_by_state['State'].unique()
-st.write(f"Estados únicos en los datos: {', '.join(unique_states)}")
-
 fig_map = px.choropleth(sales_by_state, 
                         locations='State_Code', 
                         locationmode="USA-states", 

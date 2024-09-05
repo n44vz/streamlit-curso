@@ -23,7 +23,7 @@ state_codes = {
 
 @st.cache_data
 def load_data():
-    df = pd.read_csv('data/ventas.csv')
+    df = pd.read_csv('.data/ventas.csv')
     df['State'] = df['State'].str.title()
     df['State_Code'] = df['State'].map(state_codes)
     df['Order Date'] = pd.to_datetime(df['Order Date'])

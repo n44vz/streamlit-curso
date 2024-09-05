@@ -11,7 +11,7 @@ def load_data():
 df = load_data()
 
 # Título de la aplicación
-st.title('Dashboard de Ventas Simplificado')
+st.title('Dashboard de Ventas')
 
 # Gráfico de barras: Ventas por Categoría
 st.subheader('Ventas por Categoría')
@@ -28,12 +28,22 @@ st.plotly_chart(fig_scatter)
 # Mapa de ventas por estado
 st.subheader('Mapa de Ventas por Estado')
 sales_by_state = df.groupby('State')['Sales'].sum().reset_index()
+
+# Verificar los estados únicos
+unique_states = sales_by_state['State'].unique()
+st.write(f"Estados únicos en los datos: {', '.join(unique_states)}")
+
 fig_map = px.choropleth(sales_by_state, 
                         locations='State', 
                         locationmode="USA-states", 
                         color='Sales', 
                         scope="usa", 
                         color_continuous_scale="Viridis")
+
+# Ajustar la configuración del mapa
+fig_map.update_layout(geo_scope='usa')  # Enfocar en USA
+fig_map.update_geos(showcoastlines=True, coastlinecolor="Black", showland=True, landcolor="white", showstates=True, statecolor="Black")
+
 st.plotly_chart(fig_map)
 
 # Tabla de datos

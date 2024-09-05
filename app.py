@@ -20,7 +20,7 @@ state_codes = {
 # Cargar los datos
 @st.cache_data
 def load_data():
-    df = pd.read_csv('data/ventas.csv')
+    df = pd.read_csv('.data/ventas.csv')
     df['State'] = df['State'].str.title()
     # Convertir nombres de estados a códigos
     df['State_Code'] = df['State'].map(state_codes)

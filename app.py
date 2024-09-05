@@ -3,6 +3,9 @@ import pandas as pd
 import plotly.express as px
 from datetime import datetime
 
+# Configuración de la página (debe ser la primera llamada a Streamlit)
+st.set_page_config(page_title="Dashboard de Ventas", layout="wide")
+
 # Diccionario de mapeo de nombres de estados a códigos
 state_codes = {
     'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR', 'California': 'CA',
@@ -20,7 +23,7 @@ state_codes = {
 
 @st.cache_data
 def load_data():
-    df = pd.read_csv('.data/ventas.csv')
+    df = pd.read_csv('data/ventas.csv')
     df['State'] = df['State'].str.title()
     df['State_Code'] = df['State'].map(state_codes)
     df['Order Date'] = pd.to_datetime(df['Order Date'])
@@ -28,9 +31,6 @@ def load_data():
 
 # Cargar los datos
 df = load_data()
-
-# Configuración de la página
-st.set_page_config(page_title="Dashboard de Ventas", layout="wide")
 
 # Título de la aplicación
 st.title('Dashboard de Ventas')

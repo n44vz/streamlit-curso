@@ -1,72 +1,41 @@
 import streamlit as st
-import sys
-import subprocess
-
-def install(package):
-    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-
-# Comprobación e instalación de dependencias
-required_packages = ['pandas', 'plotly', 'pillow']
-for package in required_packages:
-    try:
-        __import__(package)
-    except ImportError:
-        st.warning(f"{package} no está instalado. Intentando instalar...")
-        install(package)
-        st.experimental_rerun()
-
 import pandas as pd
 import plotly.express as px
-import os
-
-
-@st.cache_data
-def load_data():
-    csv_path = os.path.join('data', 'ventas.csv')
-    df = pd.read_csv(csv_path)
-    # Convertir la columna 'Order Date' a datetime
-    df['Order Date'] = pd.to_datetime(df['Order Date'])
-    return df
 
 # Cargar los datos
-try:
-    df = load_data()
-except FileNotFoundError:
-    st.error("Error: No se pudo encontrar el archivo 'ventas.csv' en la carpeta 'data'.")
-    st.stop()
+@st.cache_data
+def load_data():
+    return pd.read_csv('data/ventas.csv')
+
+# Cargar los datos
+df = load_data()
 
 # Título de la aplicación
-st.title('Dashboard de Ventas')
-
-# Sidebar para filtros
-st.sidebar.header('Filtros')
-category = st.sidebar.multiselect('Selecciona Categoría', options=df['Category'].unique(), default=df['Category'].unique())
-date_range = st.sidebar.date_input('Rango de Fechas', [df['Order Date'].min(), df['Order Date'].max()])
-
-# Filtrar datos
-df_filtered = df[df['Category'].isin(category) & 
-                 (df['Order Date'].dt.date >= date_range[0]) & 
-                 (df['Order Date'].dt.date <= date_range[1])]
+st.title('Dashboard de Ventas Simplificado')
 
 # Gráfico de barras: Ventas por Categoría
 st.subheader('Ventas por Categoría')
-fig_sales = px.bar(df_filtered.groupby('Category')['Sales'].sum().reset_index(), 
+fig_sales = px.bar(df.groupby('Category')['Sales'].sum().reset_index(), 
                    x='Category', y='Sales', color='Category')
 st.plotly_chart(fig_sales)
 
 # Gráfico de dispersión: Ventas vs Beneficio
 st.subheader('Ventas vs Beneficio')
-fig_scatter = px.scatter(df_filtered, x='Sales', y='Profit', color='Category', 
+fig_scatter = px.scatter(df, x='Sales', y='Profit', color='Category', 
                          hover_data=['Customer Name'])
 st.plotly_chart(fig_scatter)
 
 # Mapa de ventas por estado
 st.subheader('Mapa de Ventas por Estado')
-sales_by_state = df_filtered.groupby('State')['Sales'].sum().reset_index()
-fig_map = px.choropleth(sales_by_state, locations='State', locationmode="USA-states", 
-                        color='Sales', scope="usa", color_continuous_scale="Viridis")
+sales_by_state = df.groupby('State')['Sales'].sum().reset_index()
+fig_map = px.choropleth(sales_by_state, 
+                        locations='State', 
+                        locationmode="USA-states", 
+                        color='Sales', 
+                        scope="usa", 
+                        color_continuous_scale="Viridis")
 st.plotly_chart(fig_map)
 
 # Tabla de datos
 st.subheader('Datos Detallados')
-st.dataframe(df_filtered)
+st.dataframe(df)

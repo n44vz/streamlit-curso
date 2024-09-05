@@ -1,9 +1,25 @@
 import streamlit as st
+import sys
+import subprocess
+
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+# Comprobación e instalación de dependencias
+required_packages = ['pandas', 'plotly', 'pillow']
+for package in required_packages:
+    try:
+        __import__(package)
+    except ImportError:
+        st.warning(f"{package} no está instalado. Intentando instalar...")
+        install(package)
+        st.experimental_rerun()
+
 import pandas as pd
 import plotly.express as px
 import os
 
-# Cargar los datos desde un archivo CSV
+
 @st.cache_data
 def load_data():
     csv_path = os.path.join('data', 'ventas.csv')

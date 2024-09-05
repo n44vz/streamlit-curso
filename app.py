@@ -51,8 +51,8 @@ fig_map.update_layout(
         coastlinecolor="Black",
         showland=True,
         landcolor="white",
-        showstates=True,
-        statecolor="Black"
+        showsubunits=True,
+        subunitcolor="Black"
     )
 )
 

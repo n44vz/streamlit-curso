@@ -5,7 +5,10 @@ import plotly.express as px
 # Cargar los datos
 @st.cache_data
 def load_data():
-    return pd.read_csv('.data/ventas.csv')
+    df = pd.read_csv('.data/ventas.csv')
+    # Asegurarse de que 'State' esté capitalizado correctamente
+    df['State'] = df['State'].str.title()
+    return df
 
 # Cargar los datos
 df = load_data()
@@ -41,8 +44,17 @@ fig_map = px.choropleth(sales_by_state,
                         color_continuous_scale="Viridis")
 
 # Ajustar la configuración del mapa
-fig_map.update_layout(geo_scope='usa')  # Enfocar en USA
-fig_map.update_geos(showcoastlines=True, coastlinecolor="Black", showland=True, landcolor="white", showstates=True, statecolor="Black")
+fig_map.update_layout(
+    geo_scope='usa',  # Enfocar en USA
+    geo=dict(
+        showcoastlines=True,
+        coastlinecolor="Black",
+        showland=True,
+        landcolor="white",
+        showstates=True,
+        statecolor="Black"
+    )
+)
 
 st.plotly_chart(fig_map)
 
